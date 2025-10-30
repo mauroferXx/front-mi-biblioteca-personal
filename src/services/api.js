@@ -71,11 +71,13 @@ export const gameAPI = {
 export const authAPI = {
   register: async ({ name, email, password }) => {
     const response = await api.post('/api/auth/register', { name, email, password });
-    return response.data;
+    const data = response.data || {};
+    return { success: data.success !== false, ...data };
   },
   login: async ({ identifier, password }) => {
     const response = await api.post('/api/auth/login', { identifier, password });
-    return response.data;
+    const data = response.data || {};
+    return { success: data.success !== false, ...data };
   }
 };
 

@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://trivia-prod.eba-8n5wucxt.us-east-2.elasticbeanstalk.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

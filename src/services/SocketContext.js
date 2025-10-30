@@ -50,7 +50,7 @@ export const SocketProvider = ({ children }) => {
     socketInitialized.current = true;
 
     // Conectar al servidor Socket.IO
-    const newSocket = io(process.env.REACT_APP_SERVER_URL || 'http://trivia-prod.eba-8n5wucxt.us-east-2.elasticbeanstalk.com', {
+    const newSocket = io(process.env.REACT_APP_SERVER_URL || 'https://trivia-prod.eba-8n5wucxt.us-east-2.elasticbeanstalk.com', {
       transports: ['websocket', 'polling'],
       timeout: 20000,
       forceNew: false,

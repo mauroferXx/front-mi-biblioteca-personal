@@ -3,7 +3,7 @@
 export const APP_CONFIG = {
   // Configuración del servidor
   SERVER: {
-    URL: process.env.REACT_APP_SERVER_URL || 'http://trivia-prod.eba-8n5wucxt.us-east-2.elasticbeanstalk.com',
+    URL: process.env.REACT_APP_SERVER_URL || 'https://trivia-prod.eba-8n5wucxt.us-east-2.elasticbeanstalk.com',
     TIMEOUT: 10000,
     RECONNECT_ATTEMPTS: 5,
     RECONNECT_DELAY: 1000

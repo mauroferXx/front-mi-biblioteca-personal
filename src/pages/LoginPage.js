@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -33,7 +33,6 @@ const LoginPage = () => {
     <div className="min-h-full" style={{ display: 'grid', placeItems: 'center', padding: '3rem 1rem', background: '#f3f4f6' }}>
       <div className="card" style={{ width: '100%', maxWidth: 420 }}>
         <h1 className="text-2xl font-bold" style={{ marginBottom: '1rem' }}>Iniciar sesión</h1>
-        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-sm text-gray-700" htmlFor="username">Usuario o correo</label>
@@ -64,7 +63,7 @@ const LoginPage = () => {
           </button>
         </form>
         <div className="text-sm" style={{ marginTop: '1rem', textAlign: 'center' }}>
-          ¿No tienes cuenta? <a href="/register" className="link">Regístrate</a>
+          ¿No tienes cuenta? <Link to="/register" className="link">Regístrate</Link>
         </div>
       </div>
 

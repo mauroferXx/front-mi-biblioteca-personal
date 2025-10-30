@@ -8,18 +8,10 @@ import { libraryAPI } from '../services/api';
 const TriviaHomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userName, setUserName] = useState('');
   const [roomCode, setRoomCode] = useState('');
-  const [isCreatingRoom, setIsCreatingRoom] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [myLibrary, setMyLibrary] = useState([]);
   const [loadingLib, setLoadingLib] = useState(false);
-
-  useEffect(() => {
-    if (user?.username && !userName) {
-      setUserName(user.username);
-    }
-  }, [user?.username]);
 
   const openPicker = async () => {
     if (!user?.id) {
@@ -39,31 +31,34 @@ const TriviaHomePage = () => {
   };
 
   const startBookRoom = (book) => {
-    if (!userName.trim()) {
-      alert('Por favor ingresa tu nombre');
+    if (!user?.username) {
+      alert('Usuario no disponible');
       return;
     }
     const roomId = `BOOK_${book.book.id}`;
     setShowPicker(false);
-    navigate(`/trivia/lobby/${roomId}?name=${encodeURIComponent(userName)}&host=true`);
+    navigate(`/trivia/lobby/${roomId}?name=${encodeURIComponent(user.username)}&host=true`);
   };
 
   const handleCreateRoom = () => {
-    if (!userName.trim()) {
-      alert('Por favor ingresa tu nombre');
+    if (!user?.username) {
+      alert('Usuario no disponible');
       return;
     }
-    setIsCreatingRoom(true);
     const newRoomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    navigate(`/trivia/lobby/${newRoomCode}?name=${encodeURIComponent(userName)}&host=true`);
+    navigate(`/trivia/lobby/${newRoomCode}?name=${encodeURIComponent(user.username)}&host=true`);
   };
 
   const handleJoinRoom = () => {
-    if (!userName.trim() || !roomCode.trim()) {
-      alert('Por favor completa todos los campos');
+    if (!user?.username) {
+      alert('Usuario no disponible');
       return;
     }
-    navigate(`/trivia/lobby/${roomCode.toUpperCase()}?name=${encodeURIComponent(userName)}`);
+    if (!roomCode.trim()) {
+      alert('Por favor ingresa el código de sala');
+      return;
+    }
+    navigate(`/trivia/lobby/${roomCode.toUpperCase()}?name=${encodeURIComponent(user.username)}`);
   };
 
   return (
@@ -104,37 +99,6 @@ const TriviaHomePage = () => {
               </div>
 
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.5rem' }}>Tu nombre</label>
-                  <input
-                    type="text"
-                    className="input"
-                    placeholder="Ingresa tu nombre"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    maxLength={20}
-                  />
-                </div>
-
-                <button
-                  className="btn btn-success"
-                  onClick={handleCreateRoom}
-                  disabled={isCreatingRoom}
-                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-                >
-                  {isCreatingRoom ? (
-                    <>
-                      <div className="animate-spin" style={{ width: '1rem', height: '1rem', borderRadius: '9999px', borderBottom: '2px solid white' }} />
-                      Creando...
-                    </>
-                  ) : (
-                    <>
-                      <Play size={16} />
-                      Crear Sala
-                    </>
-                  )}
-                </button>
-
                 <button
                   className="btn"
                   onClick={openPicker}
@@ -163,26 +127,14 @@ const TriviaHomePage = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.5rem' }}>Tu nombre</label>
-                  <input
-                    type="text"
-                    className="input"
-                    placeholder="Ingresa tu nombre"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    maxLength={20}
-                  />
-                </div>
-
-                <div>
                   <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.5rem' }}>Código de sala</label>
                   <input
                     type="text"
                     className="input"
-                    placeholder="Ej: ABC123"
+                    placeholder="Ej: ABC123 o BOOK_123456"
                     value={roomCode}
                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                    maxLength={6}
+                    maxLength={32}
                   />
                 </div>
 

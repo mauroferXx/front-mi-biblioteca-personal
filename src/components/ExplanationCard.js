@@ -17,7 +17,7 @@ const ExplanationCard = ({ answerResult }) => {
           : 'linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.3) 100%), linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 15, 30, 0.98) 100%)',
         backdropFilter: 'blur(20px)',
         borderRadius: '12px',
-        padding: '3rem 2rem',
+        padding: 'clamp(1rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem)',
         textAlign: 'center',
         boxShadow: answerResult.isCorrect
           ? '0 8px 32px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
@@ -60,30 +60,30 @@ const ExplanationCard = ({ answerResult }) => {
             <div style={{
               background: 'linear-gradient(135deg, #10b981, #059669)',
               borderRadius: '50%',
-              padding: '1.5rem',
+              padding: 'clamp(0.75rem, 3vw, 1.5rem)',
               boxShadow: '0 0 40px rgba(16, 185, 129, 0.6)',
               border: '3px solid rgba(16, 185, 129, 0.3)'
             }}>
-              <CheckCircle size={80} style={{ color: 'white', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
+              <CheckCircle size={64} style={{ color: 'white', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
             </div>
           ) : (
             <div style={{
               background: 'linear-gradient(135deg, #ef4444, #dc2626)',
               borderRadius: '50%',
-              padding: '1.5rem',
+              padding: 'clamp(0.75rem, 3vw, 1.5rem)',
               boxShadow: '0 0 40px rgba(239, 68, 68, 0.6)',
               border: '3px solid rgba(239, 68, 68, 0.3)'
             }}>
-              <XCircle size={80} style={{ color: 'white', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
+              <XCircle size={64} style={{ color: 'white', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
             </div>
           )}
         </motion.div>
 
         <motion.h2
           style={{ 
-            fontSize: '3rem',
+            fontSize: 'clamp(1.5rem, 6vw, 3rem)',
             fontWeight: '900',
-            marginBottom: '2rem',
+            marginBottom: 'clamp(1rem, 3.5vw, 2rem)',
             color: answerResult.isCorrect ? '#10b981' : '#ef4444',
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
@@ -103,9 +103,9 @@ const ExplanationCard = ({ answerResult }) => {
             background: answerResult.isCorrect
               ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)'
               : 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.15) 100%)',
-            padding: '1.5rem 2rem',
+            padding: 'clamp(0.75rem, 3.5vw, 1.5rem) clamp(1rem, 4vw, 2rem)',
             borderRadius: '12px',
-            marginBottom: '2rem',
+            marginBottom: 'clamp(1rem, 3.5vw, 2rem)',
             backdropFilter: 'blur(10px)',
             border: answerResult.isCorrect
               ? '1px solid rgba(16, 185, 129, 0.3)'
@@ -125,12 +125,12 @@ const ExplanationCard = ({ answerResult }) => {
             gap: '0.75rem', 
             marginBottom: '1rem'
           }}>
-            <Lightbulb size={28} style={{ 
+            <Lightbulb size={22} style={{ 
               color: answerResult.isCorrect ? '#10b981' : '#ef4444',
               filter: 'drop-shadow(0 0 10px ' + (answerResult.isCorrect ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)') + ')'
             }} />
             <h3 style={{ 
-              fontSize: '1.5rem', 
+              fontSize: 'clamp(1rem, 4.5vw, 1.5rem)', 
               fontWeight: '700',
               color: '#ffffff',
               textTransform: 'uppercase',
@@ -140,14 +140,14 @@ const ExplanationCard = ({ answerResult }) => {
             </h3>
           </div>
           <p style={{ 
-            fontSize: '1.3rem', 
+            fontSize: 'clamp(1rem, 4vw, 1.3rem)', 
             fontWeight: '700',
             color: '#ffffff',
             lineHeight: '1.6'
           }}>
             <span style={{ 
               color: answerResult.isCorrect ? '#10b981' : '#ef4444',
-              fontSize: '1.5rem',
+              fontSize: 'clamp(1.1rem, 4.5vw, 1.5rem)',
               fontWeight: '900'
             }}>
               {answerResult.correctAnswer}
@@ -161,9 +161,9 @@ const ExplanationCard = ({ answerResult }) => {
           <motion.div
             style={{
               background: 'rgba(0, 0, 0, 0.3)',
-              padding: '1.5rem 2rem',
+              padding: 'clamp(0.75rem, 3.5vw, 1.5rem) clamp(1rem, 4vw, 2rem)',
               borderRadius: '12px',
-              fontSize: '1.05rem',
+              fontSize: 'clamp(0.95rem, 3.5vw, 1.05rem)',
               lineHeight: '1.8',
               color: '#e0e0e0',
               border: '1px solid rgba(199, 125, 255, 0.2)',

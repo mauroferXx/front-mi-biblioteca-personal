@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trophy, Users, Clock, RefreshCw, ArrowLeft, Medal, Award, Crown } from 'lucide-react';
-import axios from 'axios';
+import { gameAPI } from '../services/api';
 
 const LeaderboardPage = () => {
   const navigate = useNavigate();
@@ -17,8 +17,8 @@ const LeaderboardPage = () => {
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/game/leaderboard?limit=20');
-      setLeaderboard(response.data.leaderboard || []);
+      const data = await gameAPI.getLeaderboard(20);
+      setLeaderboard(data.leaderboard || []);
       setError(null);
     } catch (err) {
       console.error('Error fetching leaderboard:', err);

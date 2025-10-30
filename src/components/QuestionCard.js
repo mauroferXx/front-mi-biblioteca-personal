@@ -133,7 +133,7 @@ const QuestionCard = ({
         background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 15, 30, 0.98) 100%)',
         backdropFilter: 'blur(20px)',
         borderRadius: '12px',
-        padding: '2rem',
+        padding: 'clamp(1rem, 4vw, 2rem)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
         border: '1px solid rgba(199, 125, 255, 0.2)',
         position: 'relative'
@@ -143,10 +143,10 @@ const QuestionCard = ({
       transition={{ duration: 0.5 }}
     >
       {/* Header con timer y número de pregunta */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(1rem, 3vw, 2rem)', gap: '0.75rem' }}>
         <div style={{ 
           color: '#c77dff', 
-          fontSize: '0.9rem', 
+          fontSize: 'clamp(0.8rem, 2.5vw, 0.9rem)', 
           fontWeight: '700',
           textTransform: 'uppercase',
           letterSpacing: '0.05em'
@@ -161,13 +161,13 @@ const QuestionCard = ({
               : 'linear-gradient(135deg, rgba(0, 230, 255, 0.2) 0%, rgba(0, 184, 212, 0.2) 100%)',
             border: timeRemaining <= 10 ? '2px solid #ef4444' : '2px solid #00e6ff',
             borderRadius: '50%',
-            width: '56px',
-            height: '56px',
+            width: 'clamp(44px, 10vw, 56px)',
+            height: 'clamp(44px, 10vw, 56px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: timeRemaining <= 10 ? '#ef4444' : '#00e6ff',
-            fontSize: '1.5rem',
+            fontSize: 'clamp(1.1rem, 4vw, 1.5rem)',
             fontWeight: '900',
             boxShadow: timeRemaining <= 10 
               ? '0 0 20px rgba(239, 68, 68, 0.5)'
@@ -178,7 +178,7 @@ const QuestionCard = ({
           </div>
           <span style={{ 
             color: '#8b8b8b', 
-            fontSize: '0.85rem',
+            fontSize: 'clamp(0.75rem, 2.5vw, 0.85rem)',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.05em'
@@ -191,18 +191,18 @@ const QuestionCard = ({
       {/* Texto de la pregunta */}
       <div style={{ 
         color: '#ffffff',
-        fontSize: '1.5rem',
+        fontSize: 'clamp(1.1rem, 4.5vw, 1.5rem)',
         fontWeight: '700',
-        marginBottom: '2rem',
+        marginBottom: 'clamp(1rem, 3.5vw, 2rem)',
         lineHeight: '1.4',
         textAlign: 'center',
-        padding: '1rem'
+        padding: 'clamp(0.5rem, 3vw, 1rem)'
       }}>
         {question.text}
       </div>
 
       {/* Opciones */}
-      <div style={{ display: 'grid', gap: '1rem' }}>
+      <div style={{ display: 'grid', gap: 'clamp(0.5rem, 3vw, 1rem)' }}>
         {question.options.map((option, index) => {
           const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
           const optionClass = getOptionClass(optionLetter);
@@ -240,13 +240,13 @@ const QuestionCard = ({
                 background: bgColor,
                 border: `2px solid ${borderColor}`,
                 borderRadius: '8px',
-                padding: '1.25rem 1.5rem',
+                padding: 'clamp(0.75rem, 3.5vw, 1.25rem) clamp(1rem, 4vw, 1.5rem)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '1rem',
+                gap: 'clamp(0.5rem, 3vw, 1rem)',
                 cursor: (hasAnswered || timeRemaining <= 0) ? 'not-allowed' : 'pointer',
                 color: textColor,
-                fontSize: '1.05rem',
+                fontSize: 'clamp(0.95rem, 3.2vw, 1.05rem)',
                 fontWeight: '600',
                 textAlign: 'left',
                 boxShadow,
@@ -254,8 +254,8 @@ const QuestionCard = ({
               }}
             >
               <div style={{
-                width: '40px',
-                height: '40px',
+                width: 'clamp(32px, 9vw, 40px)',
+                height: 'clamp(32px, 9vw, 40px)',
                 borderRadius: '8px',
                 background: optionClass === 'correct' ? '#10b981' 
                   : optionClass === 'incorrect' ? '#ef4444'
@@ -264,7 +264,7 @@ const QuestionCard = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.25rem',
+                fontSize: 'clamp(1rem, 3.5vw, 1.25rem)',
                 fontWeight: '900',
                 color: optionClass ? '#ffffff' : '#c77dff',
                 flexShrink: 0,

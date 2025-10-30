@@ -130,9 +130,10 @@ const LobbyPage = () => {
   return (
     <div className="min-h-full" style={{ 
       background: 'radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1e 50%, #000000 100%)',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       position: 'relative',
-      overflow: 'hidden'
+      overflowX: 'hidden',
+      overflowY: 'auto'
     }}>
       {/* Efectos de fondo estilo LOL */}
       <div style={{
@@ -145,13 +146,13 @@ const LobbyPage = () => {
         pointerEvents: 'none'
       }} />
       
-      <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem', maxWidth: '1400px', position: 'relative', zIndex: 1 }}>
+      <div className="container" style={{ padding: '1rem', paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))', maxWidth: '1400px', position: 'relative', zIndex: 1 }}>
         {/* Botón volver */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
-          style={{ marginBottom: '2rem' }}
+          style={{ marginBottom: '1rem' }}
         >
           <button 
             onClick={handleGoBack} 
@@ -161,7 +162,9 @@ const LobbyPage = () => {
               color: '#c77dff',
               border: '1px solid rgba(199, 125, 255, 0.3)',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 0 20px rgba(199, 125, 255, 0.2)'
+              boxShadow: '0 0 20px rgba(199, 125, 255, 0.2)',
+              padding: '0.5rem 1rem',
+              fontSize: '0.875rem'
             }}
           >
             <ArrowLeft size={16} />
@@ -173,83 +176,78 @@ const LobbyPage = () => {
         <motion.div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '2rem',
-            gap: '2rem'
+            flexDirection: 'column',
+            gap: '1rem',
+            marginBottom: '1.5rem'
           }}
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           {/* Código de Sala */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <motion.div
+              onClick={handleCopyRoomCode}
               style={{ 
-                background: 'linear-gradient(135deg, rgba(199, 125, 255, 0.15) 0%, rgba(0, 230, 255, 0.15) 100%)',
-                border: '2px solid rgba(199, 125, 255, 0.4)',
+                background: copied
+                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%)'
+                  : 'linear-gradient(135deg, rgba(199, 125, 255, 0.15) 0%, rgba(0, 230, 255, 0.15) 100%)',
+                border: copied 
+                  ? '2px solid rgba(16, 185, 129, 0.6)'
+                  : '2px solid rgba(199, 125, 255, 0.4)',
                 borderRadius: '8px',
-                padding: '1rem 2rem',
-                boxShadow: 'inset 0 0 30px rgba(199, 125, 255, 0.2), 0 0 20px rgba(199, 125, 255, 0.3)',
-                display: 'inline-flex',
+                padding: '0.75rem 1.5rem',
+                boxShadow: copied
+                  ? 'inset 0 0 30px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.4)'
+                  : 'inset 0 0 30px rgba(199, 125, 255, 0.2), 0 0 20px rgba(199, 125, 255, 0.3)',
+                display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '1rem'
+                cursor: 'pointer',
+                userSelect: 'none'
               }}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, type: 'spring' }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <div>
-                <div style={{ 
-                  color: '#c77dff', 
-                  fontSize: '0.7rem', 
-                  marginBottom: '0.25rem', 
-                  fontWeight: '700',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase'
-                }}>
-                  CÓDIGO
-                </div>
-                <div style={{ 
-                  color: '#00e6ff', 
-                  fontSize: '1.75rem', 
-                  fontWeight: '900', 
-                  letterSpacing: '0.3em',
-                  fontFamily: 'monospace',
-                  textShadow: '0 0 15px rgba(0, 230, 255, 0.8)'
-                }}>
-                  {roomId}
-                </div>
-            </div>
-            </motion.div>
-
-            <motion.button 
-              onClick={handleCopyRoomCode} 
-              className="btn"
-              style={{ 
-                background: copied 
-                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.3) 100%)'
-                  : 'linear-gradient(135deg, rgba(199, 125, 255, 0.2) 0%, rgba(0, 230, 255, 0.2) 100%)',
-                color: copied ? '#10b981' : '#c77dff',
-                border: `2px solid ${copied ? '#10b981' : 'rgba(199, 125, 255, 0.5)'}`,
+              <div style={{ 
+                color: copied ? '#10b981' : '#c77dff', 
+                fontSize: '0.65rem', 
+                marginBottom: '0.25rem', 
                 fontWeight: '700',
-                padding: '0.75rem 1.5rem',
-                fontSize: '0.85rem',
+                letterSpacing: '0.15em',
                 textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                boxShadow: copied 
-                  ? '0 0 20px rgba(16, 185, 129, 0.5)'
-                  : '0 0 20px rgba(199, 125, 255, 0.3)'
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? 'COPIADO' : 'COPIAR'}
-            </motion.button>
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                {copied ? (
+                  <>
+                    <Check size={12} />
+                    CÓDIGO COPIADO
+                  </>
+                ) : (
+                  <>
+                    <Copy size={12} />
+                    CÓDIGO (CLICK PARA COPIAR)
+                  </>
+                )}
+              </div>
+              <div style={{ 
+                color: copied ? '#10b981' : '#00e6ff', 
+                fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', 
+                fontWeight: '900', 
+                letterSpacing: '0.2em',
+                fontFamily: 'monospace',
+                textShadow: copied 
+                  ? '0 0 15px rgba(16, 185, 129, 0.8)'
+                  : '0 0 15px rgba(0, 230, 255, 0.8)'
+              }}>
+                {roomId}
+              </div>
+            </motion.div>
           </div>
 
           {/* Cuenta Regresiva */}
@@ -263,11 +261,13 @@ const LobbyPage = () => {
                   ? '2px solid rgba(239, 68, 68, 0.6)'
                   : '2px solid rgba(251, 191, 36, 0.4)',
                 borderRadius: '8px',
-                padding: '1rem 2rem',
+                padding: '0.75rem 1.5rem',
                 boxShadow: countdown <= 5
                   ? 'inset 0 0 30px rgba(239, 68, 68, 0.2), 0 0 30px rgba(239, 68, 68, 0.5)'
                   : 'inset 0 0 30px rgba(251, 191, 36, 0.2), 0 0 20px rgba(251, 191, 36, 0.3)',
-                textAlign: 'center'
+                textAlign: 'center',
+                margin: '0 auto',
+                maxWidth: '200px'
               }}
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -275,7 +275,7 @@ const LobbyPage = () => {
             >
               <div style={{ 
                 color: countdown <= 5 ? '#ef4444' : '#fbbf24', 
-                fontSize: '0.7rem', 
+                fontSize: '0.65rem', 
                 marginBottom: '0.25rem', 
                 fontWeight: '700',
                 letterSpacing: '0.15em',
@@ -286,7 +286,7 @@ const LobbyPage = () => {
               <motion.div
                 style={{ 
                   color: countdown <= 5 ? '#ef4444' : '#fbbf24', 
-                  fontSize: '2.5rem', 
+                  fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', 
                   fontWeight: '900',
                   fontFamily: 'monospace',
                   textShadow: countdown <= 5 
@@ -308,11 +308,11 @@ const LobbyPage = () => {
             background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.95) 100%)',
             backdropFilter: 'blur(20px)',
             borderRadius: '8px',
-            padding: '2rem',
+            padding: '1rem',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
             border: '1px solid rgba(199, 125, 255, 0.2)',
-            marginBottom: '2rem',
-            minHeight: '250px',
+            marginBottom: '1.5rem',
+            minHeight: '200px',
             position: 'relative',
             overflow: 'hidden'
           }}
@@ -321,9 +321,9 @@ const LobbyPage = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <h3 style={{ 
-            fontSize: '0.9rem',
+            fontSize: '0.8rem',
             fontWeight: '700',
-            marginBottom: '2rem',
+            marginBottom: '1.25rem',
             color: '#c77dff',
             textTransform: 'uppercase',
             letterSpacing: '0.15em',
@@ -352,8 +352,8 @@ const LobbyPage = () => {
                 display: 'flex', 
                 justifyContent: 'center', 
                 flexWrap: 'wrap',
-                gap: '2rem',
-                padding: '1rem'
+                gap: 'clamp(1rem, 3vw, 2rem)',
+                padding: '0.5rem'
               }}>
                 {gameState.players.map((player, index) => (
                   <motion.div
@@ -366,15 +366,16 @@ const LobbyPage = () => {
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
-                      gap: '0.75rem',
-                      position: 'relative'
+                      gap: '0.5rem',
+                      position: 'relative',
+                      minWidth: '70px'
                     }}
                   >
                     {/* Avatar */}
           <motion.div
                       style={{
-                        width: '100px',
-                        height: '100px',
+                        width: 'clamp(70px, 15vw, 100px)',
+                        height: 'clamp(70px, 15vw, 100px)',
                         borderRadius: '12px',
                         background: `linear-gradient(135deg, ${
                           ['#c77dff', '#00e6ff', '#fbbf24', '#10b981', '#ef4444'][index % 5]
@@ -385,7 +386,7 @@ const LobbyPage = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'white',
-                        fontSize: '2.5rem',
+                        fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
                         fontWeight: '900',
                         boxShadow: `0 8px 24px ${
                           ['rgba(199, 125, 255, 0.6)', 'rgba(0, 230, 255, 0.6)', 'rgba(251, 191, 36, 0.6)', 'rgba(16, 185, 129, 0.6)', 'rgba(239, 68, 68, 0.6)'][index % 5]
@@ -403,13 +404,13 @@ const LobbyPage = () => {
                         <motion.div
                           style={{
                             position: 'absolute',
-                            top: '-10px',
-                            left: '-10px',
+                            top: '-8px',
+                            left: '-8px',
                             background: 'linear-gradient(135deg, #c77dff, #00e6ff)',
                             color: 'white',
-                            padding: '4px 12px',
+                            padding: '3px 10px',
                             borderRadius: '6px',
-                            fontSize: '0.7rem',
+                            fontSize: '0.65rem',
                             fontWeight: '900',
                             letterSpacing: '0.05em',
                             boxShadow: '0 0 15px rgba(199, 125, 255, 0.8)'
@@ -427,15 +428,19 @@ const LobbyPage = () => {
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ 
                         fontWeight: '700', 
-                        fontSize: '1rem', 
+                        fontSize: 'clamp(0.8rem, 2.5vw, 1rem)', 
                         color: '#ffffff',
                         textShadow: player.id === playerInfo.id ? '0 0 10px rgba(199, 125, 255, 0.8)' : 'none',
-                        marginBottom: '0.25rem'
+                        marginBottom: '0.15rem',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '120px'
                       }}>
                         {player.name}
                 </div>
                       <div style={{ 
-                        fontSize: '0.75rem', 
+                        fontSize: 'clamp(0.65rem, 2vw, 0.75rem)', 
                         color: '#8b8b8b',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
@@ -454,9 +459,9 @@ const LobbyPage = () => {
         <motion.div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '1.5rem',
-            marginBottom: '2rem'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+            gap: '0.75rem',
+            marginBottom: '1.5rem'
           }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -466,18 +471,18 @@ const LobbyPage = () => {
             style={{ 
               background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
               borderRadius: '8px',
-              padding: '1.5rem',
+              padding: '1rem',
               border: '1px solid rgba(199, 125, 255, 0.2)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
               textAlign: 'center'
             }}
             whileHover={{ borderColor: 'rgba(199, 125, 255, 0.4)', boxShadow: '0 0 20px rgba(199, 125, 255, 0.3)' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <BookOpen size={20} style={{ color: '#c77dff' }} />
-              <span style={{ fontSize: '0.75rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Preguntas</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+              <BookOpen size={16} style={{ color: '#c77dff' }} />
+              <span style={{ fontSize: '0.65rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Preguntas</span>
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(199, 125, 255, 0.5)' }}>
+            <div style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(199, 125, 255, 0.5)' }}>
               {gameState.totalQuestions}
             </div>
           </motion.div>
@@ -486,18 +491,18 @@ const LobbyPage = () => {
             style={{ 
               background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
               borderRadius: '8px',
-              padding: '1.5rem',
+              padding: '1rem',
               border: '1px solid rgba(0, 230, 255, 0.2)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
               textAlign: 'center'
             }}
             whileHover={{ borderColor: 'rgba(0, 230, 255, 0.4)', boxShadow: '0 0 20px rgba(0, 230, 255, 0.3)' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <Users size={20} style={{ color: '#00e6ff' }} />
-              <span style={{ fontSize: '0.75rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Jugadores</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+              <Users size={16} style={{ color: '#00e6ff' }} />
+              <span style={{ fontSize: '0.65rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Jugadores</span>
                 </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(0, 230, 255, 0.5)' }}>
+            <div style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(0, 230, 255, 0.5)' }}>
               {gameState.players.length}
                         </div>
           </motion.div>
@@ -506,18 +511,18 @@ const LobbyPage = () => {
             style={{ 
               background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
               borderRadius: '8px',
-              padding: '1.5rem',
+              padding: '1rem',
               border: '1px solid rgba(251, 191, 36, 0.2)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
               textAlign: 'center'
             }}
             whileHover={{ borderColor: 'rgba(251, 191, 36, 0.4)', boxShadow: '0 0 20px rgba(251, 191, 36, 0.3)' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <Clock size={20} style={{ color: '#fbbf24' }} />
-              <span style={{ fontSize: '0.75rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Tiempo</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+              <Clock size={16} style={{ color: '#fbbf24' }} />
+              <span style={{ fontSize: '0.65rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Tiempo</span>
                     </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
+            <div style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
               30s
             </div>
           </motion.div>
@@ -539,11 +544,12 @@ const LobbyPage = () => {
                 background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
                 backdropFilter: 'blur(20px)',
                 borderRadius: '8px',
-                padding: '2.5rem 3rem',
+                padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1.5rem, 5vw, 3rem)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8)',
                 border: '1px solid rgba(239, 68, 68, 0.3)',
                 textAlign: 'center',
-                display: 'inline-block'
+                display: 'inline-block',
+                maxWidth: '100%'
               }}
             >
               <motion.div
@@ -557,18 +563,18 @@ const LobbyPage = () => {
                   ease: 'easeInOut'
                 }}
               >
-                <Users size={72} style={{ color: '#ef4444', margin: '0 auto 1.5rem', filter: 'drop-shadow(0 0 20px rgba(239, 68, 68, 0.6))' }} />
+                <Users size={60} style={{ color: '#ef4444', margin: '0 auto 1rem', filter: 'drop-shadow(0 0 20px rgba(239, 68, 68, 0.6))' }} />
               </motion.div>
               <p style={{ 
                 color: '#ef4444', 
-                fontSize: '1.1rem', 
+                fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', 
                 fontWeight: '600',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
                 lineHeight: '1.6'
               }}>
                 Esperando jugadores...<br />
-                <span style={{ fontSize: '0.85rem', color: '#8b8b8b' }}>Mínimo 2 jugadores</span>
+                <span style={{ fontSize: 'clamp(0.75rem, 2.5vw, 0.85rem)', color: '#8b8b8b' }}>Mínimo 2 jugadores</span>
               </p>
             </motion.div>
           ) : (
@@ -580,11 +586,12 @@ const LobbyPage = () => {
                 background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
                 backdropFilter: 'blur(20px)',
                 borderRadius: '8px',
-                padding: '2rem 3rem',
+                padding: 'clamp(1.5rem, 4vw, 2rem) clamp(1.5rem, 5vw, 3rem)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8)',
                 border: '2px solid rgba(199, 125, 255, 0.4)',
                 textAlign: 'center',
-                display: 'inline-block'
+                display: 'inline-block',
+                maxWidth: '100%'
               }}
             >
               <motion.div
@@ -597,11 +604,11 @@ const LobbyPage = () => {
                   ease: 'linear'
                 }}
               >
-                <Play size={72} style={{ color: '#c77dff', margin: '0 auto 1.5rem', filter: 'drop-shadow(0 0 20px rgba(199, 125, 255, 0.6))' }} />
+                <Play size={60} style={{ color: '#c77dff', margin: '0 auto 1rem', filter: 'drop-shadow(0 0 20px rgba(199, 125, 255, 0.6))' }} />
               </motion.div>
               <p style={{ 
                 color: '#c77dff', 
-                fontSize: '1.3rem', 
+                fontSize: 'clamp(1.1rem, 3.5vw, 1.3rem)', 
                 fontWeight: '700',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
@@ -611,7 +618,7 @@ const LobbyPage = () => {
                 ¡Listos para jugar!
               </p>
               <p style={{ 
-                fontSize: '0.9rem', 
+                fontSize: 'clamp(0.8rem, 2.5vw, 0.9rem)', 
                 color: '#8b8b8b',
                 fontWeight: '500'
               }}>

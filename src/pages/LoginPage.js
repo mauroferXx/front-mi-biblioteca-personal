@@ -33,9 +33,7 @@ const LoginPage = () => {
     <div className="min-h-full" style={{ display: 'grid', placeItems: 'center', padding: '3rem 1rem', background: '#f3f4f6' }}>
       <div className="card" style={{ width: '100%', maxWidth: 420 }}>
         <h1 className="text-2xl font-bold" style={{ marginBottom: '1rem' }}>Iniciar sesión</h1>
-        <p className="text-sm text-gray-600" style={{ marginBottom: '1.5rem' }}>
-          Usa un usuario hardcodeado (por ejemplo: admin/admin123, mauro/mauro123, guest/guest)
-        </p>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-sm text-gray-700" htmlFor="username">Usuario o correo</label>

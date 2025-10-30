@@ -40,14 +40,14 @@ const QuestionResults = ({ results, playerInfo }) => {
     const topThree = results.players.slice(0, 3);
     
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 'clamp(0.5rem, 3vw, 1rem)', marginBottom: 'clamp(1rem, 3.5vw, 2rem)', flexWrap: 'wrap' }}>
         {/* Segundo lugar (izquierda) */}
         {topThree[1] && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5, type: 'spring' }}
-            style={{ flex: '0 0 auto', width: '140px' }}
+            style={{ flex: '0 0 auto', width: 'clamp(110px, 28vw, 140px)' }}
           >
             <div style={{
               background: getPositionStyle(2).bg,
@@ -55,7 +55,7 @@ const QuestionResults = ({ results, playerInfo }) => {
               borderRadius: '16px',
               padding: '1rem',
               textAlign: 'center',
-              height: '160px',
+              height: 'clamp(140px, 34vw, 160px)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -66,8 +66,8 @@ const QuestionResults = ({ results, playerInfo }) => {
             }}>
               <div style={{ 
                 background: getPositionStyle(2).iconBg,
-                width: '50px',
-                height: '50px',
+                width: 'clamp(40px, 10vw, 50px)',
+                height: 'clamp(40px, 10vw, 50px)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
@@ -76,10 +76,10 @@ const QuestionResults = ({ results, playerInfo }) => {
               }}>
                 {getPositionStyle(2).icon}
               </div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#1f2937', marginBottom: '0.25rem' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)', color: '#1f2937', marginBottom: '0.25rem' }}>
                 {topThree[1].name}
               </div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: getPositionStyle(2).textColor }}>
+              <div style={{ fontSize: 'clamp(1.1rem, 4vw, 1.25rem)', fontWeight: 'bold', color: getPositionStyle(2).textColor }}>
                 {topThree[1].score.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#6b7280' }}>puntos</div>
@@ -109,7 +109,7 @@ const QuestionResults = ({ results, playerInfo }) => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, type: 'spring' }}
-            style={{ flex: '0 0 auto', width: '160px' }}
+            style={{ flex: '0 0 auto', width: 'clamp(120px, 30vw, 160px)' }}
           >
             <div style={{
               background: getPositionStyle(1).bg,
@@ -117,7 +117,7 @@ const QuestionResults = ({ results, playerInfo }) => {
               borderRadius: '16px',
               padding: '1.25rem',
               textAlign: 'center',
-              height: '200px',
+              height: 'clamp(160px, 40vw, 200px)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -128,8 +128,8 @@ const QuestionResults = ({ results, playerInfo }) => {
             }}>
               <div style={{ 
                 background: getPositionStyle(1).iconBg,
-                width: '60px',
-                height: '60px',
+                width: 'clamp(48px, 12vw, 60px)',
+                height: 'clamp(48px, 12vw, 60px)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
@@ -139,10 +139,10 @@ const QuestionResults = ({ results, playerInfo }) => {
               }}>
                 {getPositionStyle(1).icon}
               </div>
-              <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#1f2937', marginBottom: '0.25rem' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 'clamp(1rem, 3vw, 1.1rem)', color: '#1f2937', marginBottom: '0.25rem' }}>
                 {topThree[0].name}
               </div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: getPositionStyle(1).textColor }}>
+              <div style={{ fontSize: 'clamp(1.4rem, 5vw, 1.75rem)', fontWeight: 'bold', color: getPositionStyle(1).textColor }}>
                 {topThree[0].score.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>puntos</div>
@@ -172,7 +172,7 @@ const QuestionResults = ({ results, playerInfo }) => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5, type: 'spring' }}
-            style={{ flex: '0 0 auto', width: '140px' }}
+            style={{ flex: '0 0 auto', width: 'clamp(110px, 28vw, 140px)' }}
           >
             <div style={{
               background: getPositionStyle(3).bg,
@@ -180,7 +180,7 @@ const QuestionResults = ({ results, playerInfo }) => {
               borderRadius: '16px',
               padding: '1rem',
               textAlign: 'center',
-              height: '140px',
+              height: 'clamp(120px, 30vw, 140px)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -191,8 +191,8 @@ const QuestionResults = ({ results, playerInfo }) => {
             }}>
               <div style={{ 
                 background: getPositionStyle(3).iconBg,
-                width: '45px',
-                height: '45px',
+                width: 'clamp(36px, 9vw, 45px)',
+                height: 'clamp(36px, 9vw, 45px)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
@@ -201,10 +201,10 @@ const QuestionResults = ({ results, playerInfo }) => {
               }}>
                 {getPositionStyle(3).icon}
               </div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#1f2937', marginBottom: '0.25rem' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 'clamp(0.8rem, 2.3vw, 0.85rem)', color: '#1f2937', marginBottom: '0.25rem' }}>
                 {topThree[2].name}
               </div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: getPositionStyle(3).textColor }}>
+              <div style={{ fontSize: 'clamp(1rem, 3.5vw, 1.1rem)', fontWeight: 'bold', color: getPositionStyle(3).textColor }}>
                 {topThree[2].score.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#6b7280' }}>puntos</div>
@@ -235,8 +235,8 @@ const QuestionResults = ({ results, playerInfo }) => {
     if (results.players.length <= 3) return null;
 
     return (
-      <div style={{ marginTop: '2rem' }}>
-        <h3 style={{ fontSize: '0.9rem', fontWeight: '700', color: '#c77dff', marginBottom: '0.75rem', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ marginTop: 'clamp(1rem, 3.5vw, 2rem)' }}>
+        <h3 style={{ fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)', fontWeight: '700', color: '#c77dff', marginBottom: '0.75rem', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Otros Jugadores
         </h3>
         <div className="space-y-2">
@@ -261,8 +261,8 @@ const QuestionResults = ({ results, playerInfo }) => {
             >
               <div className="flex items-center gap-3">
                 <div style={{ 
-                  minWidth: '32px',
-                  height: '32px',
+                  minWidth: 'clamp(28px, 8vw, 32px)',
+                  height: 'clamp(28px, 8vw, 32px)',
                   borderRadius: '50%',
                   background: 'rgba(199, 125, 255, 0.2)',
                   border: '1px solid rgba(199, 125, 255, 0.3)',
@@ -270,14 +270,14 @@ const QuestionResults = ({ results, playerInfo }) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 'bold',
-                  fontSize: '0.85rem',
+                  fontSize: 'clamp(0.75rem, 2.5vw, 0.85rem)',
                   color: '#c77dff'
                 }}>
                   #{player.position}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold" style={{ fontSize: '0.95rem', color: '#ffffff' }}>{player.name}</span>
+                    <span className="font-semibold" style={{ fontSize: 'clamp(0.9rem, 3vw, 0.95rem)', color: '#ffffff' }}>{player.name}</span>
                     {player.id === playerInfo.id && (
                       <span className="text-xs text-white px-2 py-0.5 rounded font-medium" style={{ 
                         background: 'linear-gradient(135deg, #c77dff, #00e6ff)',
@@ -297,7 +297,7 @@ const QuestionResults = ({ results, playerInfo }) => {
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-bold" style={{ fontSize: '1.1rem', color: '#00e6ff', textShadow: '0 0 10px rgba(0, 230, 255, 0.5)' }}>
+                <div className="font-bold" style={{ fontSize: 'clamp(1rem, 3.5vw, 1.1rem)', color: '#00e6ff', textShadow: '0 0 10px rgba(0, 230, 255, 0.5)' }}>
                   {player.score.toLocaleString()}
                 </div>
                 <div className="text-xs" style={{ color: '#8b8b8b' }}>pts</div>
@@ -316,7 +316,7 @@ const QuestionResults = ({ results, playerInfo }) => {
       exit={{ opacity: 0, scale: 0.95, y: -20 }}
       transition={{ duration: 0.5 }}
       style={{ 
-        padding: '2rem', 
+        padding: 'clamp(1rem, 4vw, 2rem)', 
         background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 15, 30, 0.98) 100%)',
         backdropFilter: 'blur(20px)',
         borderRadius: '12px',
@@ -342,7 +342,7 @@ const QuestionResults = ({ results, playerInfo }) => {
             🏆 Clasificación
           </h2>
         </motion.div>
-        <p style={{ color: '#8b8b8b', fontSize: '0.95rem' }}>
+        <p style={{ color: '#8b8b8b', fontSize: 'clamp(0.85rem, 3vw, 0.95rem)' }}>
           Pregunta {results.questionNumber} de {results.totalQuestions}
         </p>
       </div>
@@ -357,14 +357,14 @@ const QuestionResults = ({ results, playerInfo }) => {
       <motion.div 
         style={{ 
           borderTop: '2px solid rgba(199, 125, 255, 0.2)', 
-          paddingTop: '1.5rem', 
-          marginTop: '2rem' 
+          paddingTop: 'clamp(0.75rem, 3.5vw, 1.5rem)', 
+          marginTop: 'clamp(1rem, 3.5vw, 2rem)' 
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', textAlign: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.75rem', textAlign: 'center' }}>
           <div style={{ 
             background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)',
             padding: '1rem',

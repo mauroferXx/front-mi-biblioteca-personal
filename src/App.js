@@ -30,8 +30,12 @@ function App() {
         ) : (
           <Layout>
             <Routes>
-              {/* Ruta principal - Bienvenida */}
-              <Route path="/" element={<WelcomePage />} />
+              {/* Ruta principal - Bienvenida (protegida) */}
+              <Route path="/" element={
+                <PrivateRoute>
+                  <WelcomePage />
+                </PrivateRoute>
+              } />
 
               {/* Rutas de Trivia protegidas */}
               <Route path="/trivia" element={

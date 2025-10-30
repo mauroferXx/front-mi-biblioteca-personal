@@ -97,10 +97,12 @@ const GamePage = () => {
     return (
       <div className="min-h-full" style={{ 
         background: 'radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1e 50%, #000000 100%)',
-        minHeight: '100vh',
+        minHeight: '100dvh',
         position: 'relative',
-        overflow: 'hidden',
-        padding: '2rem'
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        padding: '1rem',
+        paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))'
       }}>
         {/* Efectos de fondo estilo LOL */}
         <div style={{
@@ -126,10 +128,12 @@ const GamePage = () => {
   return (
     <div className="min-h-full" style={{ 
       background: 'radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1e 50%, #000000 100%)',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       position: 'relative',
-      overflow: 'hidden',
-      padding: '2rem'
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      padding: '1rem',
+      paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))'
     }}>
       {/* Efectos de fondo estilo LOL */}
       <div style={{
@@ -187,7 +191,7 @@ const GamePage = () => {
         </button>
       </motion.div>
 
-      <div className="container" style={{ maxWidth: '1120px', position: 'relative', zIndex: 1, marginTop: '5rem' }}>
+      <div className="container" style={{ maxWidth: '1120px', position: 'relative', zIndex: 1, marginTop: 'clamp(3.5rem, 10vw, 5rem)' }}>
         {/* Contenido principal - Ancho completo */}
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           {/* Pregunta principal - FASE: question y answer_reveal */}

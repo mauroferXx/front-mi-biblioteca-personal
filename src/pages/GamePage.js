@@ -202,6 +202,7 @@ const GamePage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <QuestionCard
+                timeLimit={gameState.questionTime || 30}
                 question={gameState.currentQuestion}
                 timeRemaining={gameState.timeRemaining}
                 onAnswer={handleAnswer}

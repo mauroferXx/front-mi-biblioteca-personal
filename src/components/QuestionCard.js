@@ -10,7 +10,8 @@ const QuestionCard = ({
   questionNumber, 
   totalQuestions,
   answerResult = null, // { isCorrect, correctAnswer, correctAnswerText }
-  showReveal = false // Si debe mostrar el reveal de respuesta correcta/incorrecta
+  showReveal = false, // Si debe mostrar el reveal de respuesta correcta/incorrecta
+  timeLimit = 30 // Tiempo límite en segundos (por defecto 30)
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResults, setShowResults] = useState(false);
@@ -42,7 +43,8 @@ const QuestionCard = ({
     if (hasAnswered || timeRemaining <= 0 || showReveal) return;
     
     setSelectedAnswer(answer);
-    const timeSpent = (30 - timeRemaining) * 1000; // Convertir a milisegundos
+    // Calcular tiempo usado: tiempo límite menos tiempo restante
+    const timeSpent = (timeLimit - timeRemaining) * 1000; // Convertir a milisegundos
     onAnswer(answer, timeSpent);
   };
 

@@ -13,6 +13,8 @@ import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
 import ResultsPage from './pages/ResultsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import AchievementsPage from './pages/AchievementsPage';
+import BookHistoryPage from './pages/BookHistoryPage';
 import './styles/App.css';
 
 function App() {
@@ -66,6 +68,26 @@ function App() {
               <Route path="/trivia/leaderboard" element={
                 <PrivateRoute>
                   <LeaderboardPage />
+                </PrivateRoute>
+              } />
+              <Route path="/leaderboard" element={
+                <PrivateRoute>
+                  <LeaderboardPage />
+                </PrivateRoute>
+              } />
+              <Route path="/achievements" element={
+                <PrivateRoute>
+                  <AchievementsPage />
+                </PrivateRoute>
+              } />
+              <Route path="/history" element={
+                <PrivateRoute>
+                  <BookHistoryPage />
+                </PrivateRoute>
+              } />
+              <Route path="/history/:userId" element={
+                <PrivateRoute>
+                  <BookHistoryPage />
                 </PrivateRoute>
               } />
             </Routes>

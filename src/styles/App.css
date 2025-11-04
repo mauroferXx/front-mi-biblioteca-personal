@@ -1,3 +1,13 @@
+/* Animaciones */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Estilos específicos de la aplicación */
 .app {
   min-height: 100vh;

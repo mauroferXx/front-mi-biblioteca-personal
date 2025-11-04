@@ -24,7 +24,10 @@ export const SocketProvider = ({ children }) => {
     players: [],
     currentQuestion: null,
     questionIndex: 0,
-    totalQuestions: 10,
+    totalQuestions: 3,
+    questionTimeLimit: 30000, // en milisegundos
+    questionTime: 30, // en segundos para el frontend
+    difficulty: 'MEDIUM',
     answersReceived: 0,
     totalPlayers: 0,
     timeRemaining: 0,
@@ -49,8 +52,19 @@ export const SocketProvider = ({ children }) => {
     console.log('🔌 Inicializando conexión Socket.IO...');
     socketInitialized.current = true;
 
+    // Determinar URL del servidor
+    const isDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.port === '3000';
+    
+    const SOCKET_URL = isDevelopment 
+      ? 'http://localhost:3001' 
+      : (process.env.REACT_APP_SERVER_URL || 'https://server-mi-biblioteca-personal.onrender.com');
+    
+    console.log('🔌 Socket.IO conectando a:', SOCKET_URL);
+
     // Conectar al servidor Socket.IO
-    const newSocket = io(process.env.REACT_APP_SERVER_URL || 'https://server-mi-biblioteca-personal.onrender.com', {
+    const newSocket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       timeout: 20000,
       forceNew: false,
@@ -99,19 +113,28 @@ export const SocketProvider = ({ children }) => {
       // Resetear la bandera de joining
       joiningRoom.current = false;
       
-      if (data.success) {
+      if (data.success && data.gameState) {
+        console.log('✅ Unión exitosa, actualizando estado:', {
+          roomId: data.gameState.roomId,
+          status: data.gameState.status,
+          players: data.gameState.players?.length || 0
+        });
         setGameState(prev => ({
           ...prev,
           roomId: data.gameState.roomId,
           status: data.gameState.status,
-          players: data.gameState.players,
-          totalQuestions: data.gameState.totalQuestions
+          players: data.gameState.players || [],
+          totalQuestions: data.gameState.totalQuestions || 3,
+          questionTimeLimit: data.gameState.questionTimeLimit || 30000,
+          questionTime: data.gameState.questionTime || 30,
+          difficulty: data.gameState.difficulty || 'MEDIUM'
         }));
         
         // Actualizar información del jugador - buscar por nombre ya que el ID aún no lo tenemos
         setPlayerInfo(prev => {
-          const currentPlayer = data.gameState.players.find(p => p.name === prev.name);
+          const currentPlayer = data.gameState.players?.find(p => p.name === prev.name);
           if (currentPlayer) {
+            console.log('✅ Jugador encontrado en lista:', currentPlayer);
             return {
               ...prev,
               id: currentPlayer.id, // ¡IMPORTANTE! Guardar el ID del jugador
@@ -119,6 +142,7 @@ export const SocketProvider = ({ children }) => {
               score: currentPlayer.score
             };
           }
+          console.log('⚠️ Jugador no encontrado en lista, usando datos previos');
           return prev;
         });
         
@@ -127,6 +151,7 @@ export const SocketProvider = ({ children }) => {
           toast.success('Te has unido a la sala');
         }
       } else {
+        console.error('❌ Error al unirse:', data.error);
         toast.error(data.error || 'Error al unirse a la sala');
       }
     });
@@ -167,7 +192,11 @@ export const SocketProvider = ({ children }) => {
         ...prev,
         status: 'playing',
         questionIndex: 0,
-        currentQuestion: data.gameState.currentQuestion
+        currentQuestion: data.gameState.currentQuestion,
+        totalQuestions: data.gameState?.totalQuestions || prev.totalQuestions,
+        questionTimeLimit: data.gameState?.questionTimeLimit || prev.questionTimeLimit,
+        questionTime: data.gameState?.questionTime || prev.questionTime,
+        difficulty: data.gameState?.difficulty || prev.difficulty
       }));
       // No mostrar toast durante el juego
     });
@@ -193,25 +222,36 @@ export const SocketProvider = ({ children }) => {
         questionTimerRef.current = null;
       }
       
+      // Calcular tiempo inicial en segundos
+      const initialTime = Math.ceil(data.question.timeLimit / 1000);
+      
       setGameState(prev => ({
         ...prev,
         currentQuestion: data.question,
         questionIndex: data.questionNumber,
         answersReceived: 0,
-        timeRemaining: Math.ceil(data.question.timeLimit / 1000),
+        timeRemaining: initialTime,
         questionResults: null // Limpiar resultados anteriores
       }));
       setPlayerInfo(prev => ({ ...prev, hasAnswered: false }));
       
-      // Iniciar timer
-      startQuestionTimer(data.question.timeLimit);
+      // Iniciar timer después de un pequeño delay para asegurar que el estado se actualizó
+      // Usar setTimeout para asegurar que el estado se estableció correctamente
+      setTimeout(() => {
+        startQuestionTimer(data.question.timeLimit, initialTime);
+      }, 50);
     });
 
     newSocket.on('answer_received', (data) => {
       console.log('✅ Respuesta recibida:', data);
+      console.log(`⏰ Timer NO se modifica cuando alguien responde. Tiempo actual: ${gameState.timeRemaining} segundos`);
+      
+      // IMPORTANTE: NO modificar timeRemaining aquí. El timer debe seguir corriendo normalmente
+      // hasta que todos respondan o el tiempo se agote.
       setGameState(prev => ({
         ...prev,
         answersReceived: data.answersReceived
+        // NO modificar timeRemaining aquí - el timer debe seguir corriendo
       }));
       
       // Actualizar puntuación del jugador si es su respuesta
@@ -238,17 +278,18 @@ export const SocketProvider = ({ children }) => {
     newSocket.on('question_results', (data) => {
       console.log('📊 Resultados de pregunta:', data);
       
-      // Limpiar timer cuando llegan los resultados
+      // Limpiar timer cuando llegan los resultados (todos respondieron o tiempo expiró)
       if (questionTimerRef.current) {
         console.log('🧹 Limpiando timer por resultados de pregunta');
         clearInterval(questionTimerRef.current);
         questionTimerRef.current = null;
       }
       
+      // Establecer tiempo en 0 para indicar que la pregunta terminó
       setGameState(prev => ({
         ...prev,
         players: data.players,
-        timeRemaining: 0,
+        timeRemaining: 0, // La pregunta terminó
         questionResults: data // Guardar resultados para mostrar
       }));
       
@@ -285,6 +326,55 @@ export const SocketProvider = ({ children }) => {
       toast.error(data.message || 'Error del servidor');
     });
 
+    newSocket.on('total_questions_updated', (data) => {
+      console.log('✅ Total de preguntas actualizado:', data);
+      setGameState(prev => ({
+        ...prev,
+        totalQuestions: data.totalQuestions,
+        ...(data.gameState && {
+          questionTimeLimit: data.gameState.questionTimeLimit,
+          questionTime: data.gameState.questionTime,
+          difficulty: data.gameState.difficulty
+        })
+      }));
+    });
+
+    newSocket.on('question_time_updated', (data) => {
+      console.log('✅ Tiempo por pregunta actualizado:', data);
+      setGameState(prev => ({
+        ...prev,
+        questionTimeLimit: data.questionTimeLimit,
+        questionTime: data.questionTime,
+        ...(data.gameState && {
+          totalQuestions: data.gameState.totalQuestions,
+          difficulty: data.gameState.difficulty
+        })
+      }));
+    });
+
+    newSocket.on('difficulty_updated', (data) => {
+      console.log('✅ Dificultad actualizada:', data);
+      setGameState(prev => ({
+        ...prev,
+        difficulty: data.difficulty,
+        ...(data.gameState && {
+          totalQuestions: data.gameState.totalQuestions,
+          questionTimeLimit: data.gameState.questionTimeLimit,
+          questionTime: data.gameState.questionTime
+        })
+      }));
+    });
+
+    newSocket.on('game_state_updated', (data) => {
+      console.log('📊 Número de preguntas actualizado:', data);
+      setGameState(prev => ({
+        ...prev,
+        totalQuestions: data.totalQuestions,
+        ...data.gameState
+      }));
+      toast.success(`Número de preguntas actualizado a ${data.totalQuestions}`);
+    });
+
     setSocket(newSocket);
 
     // Cleanup - solo desconectar si realmente es necesario
@@ -308,7 +398,7 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   // Timer para las preguntas - Versión mejorada
-  const startQuestionTimer = (timeLimit) => {
+  const startQuestionTimer = (timeLimit, initialTimeSeconds = null) => {
     console.log(`⏰ Iniciando timer del frontend: ${timeLimit}ms`);
     
     // Limpiar timer anterior si existe
@@ -318,19 +408,33 @@ export const SocketProvider = ({ children }) => {
       questionTimerRef.current = null;
     }
 
-    // Calcular tiempo inicial en segundos
-    const initialTime = Math.ceil(timeLimit / 1000);
+    // Usar el tiempo inicial proporcionado o calcularlo
+    const initialTime = initialTimeSeconds !== null 
+      ? initialTimeSeconds 
+      : Math.ceil(timeLimit / 1000);
+    
     console.log(`⏰ Timer inicial: ${initialTime} segundos`);
 
-    // Establecer tiempo inicial
-    setGameState(prev => ({
-      ...prev,
-      timeRemaining: initialTime
-    }));
+    // Asegurar que el tiempo inicial esté correcto
+    setGameState(prev => {
+      // Solo actualizar si el tiempo actual no coincide con el inicial
+      if (prev.timeRemaining !== initialTime) {
+        return {
+          ...prev,
+          timeRemaining: initialTime
+        };
+      }
+      return prev;
+    });
 
     // Crear nuevo timer
     const interval = setInterval(() => {
       setGameState(prev => {
+        // Si el tiempo ya es 0 o menor, no hacer nada
+        if (prev.timeRemaining <= 0) {
+          return prev;
+        }
+        
         const newTime = prev.timeRemaining - 1;
         
         if (newTime <= 0) {
@@ -343,6 +447,7 @@ export const SocketProvider = ({ children }) => {
           };
         }
         
+        console.log(`⏰ Timer: ${newTime} segundos restantes`);
         return {
           ...prev,
           timeRemaining: newTime
@@ -355,7 +460,7 @@ export const SocketProvider = ({ children }) => {
     // Limpiar timer después del tiempo límite + buffer
     setTimeout(() => {
       console.log('🧹 Limpieza automática del timer');
-      if (questionTimerRef.current) {
+      if (questionTimerRef.current === interval) {
         clearInterval(questionTimerRef.current);
         questionTimerRef.current = null;
       }
@@ -436,6 +541,36 @@ export const SocketProvider = ({ children }) => {
     }));
   };
 
+  const updateTotalQuestions = (roomId, totalQuestions) => {
+    if (!socket || !isConnected) {
+      toast.error('No hay conexión con el servidor');
+      return;
+    }
+
+    // Permitir a cualquier jugador actualizar
+    socket.emit('update_total_questions', { roomId, totalQuestions });
+  };
+
+  const updateQuestionTime = (roomId, questionTime) => {
+    if (!socket || !isConnected) {
+      toast.error('No hay conexión con el servidor');
+      return;
+    }
+
+    // Permitir a cualquier jugador actualizar
+    socket.emit('update_question_time', { roomId, questionTime });
+  };
+
+  const updateDifficulty = (roomId, difficulty) => {
+    if (!socket || !isConnected) {
+      toast.error('No hay conexión con el servidor');
+      return;
+    }
+
+    // Permitir a cualquier jugador actualizar
+    socket.emit('update_difficulty', { roomId, difficulty });
+  };
+
   const disconnect = () => {
     if (socket) {
       socket.disconnect();
@@ -451,6 +586,9 @@ export const SocketProvider = ({ children }) => {
     startGame,
     submitAnswer,
     leaveRoom,
+    updateTotalQuestions,
+    updateQuestionTime,
+    updateDifficulty,
     disconnect,
     setGameState,
     setPlayerInfo

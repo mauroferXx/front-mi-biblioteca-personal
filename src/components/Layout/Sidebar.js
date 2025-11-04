@@ -1,17 +1,21 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Brain, X, BookOpen } from 'lucide-react';
+import { Home, Brain, X, BookOpen, Trophy, Award } from 'lucide-react';
 import { useUIStore } from '../../stores/useUIStore';
+import { useAuth } from '../../services/AuthContext';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const { sidebarOpen, closeSidebar, setActiveView, setPageTitle } = useUIStore();
 
   const menuItems = [
     { id: 'home', name: 'Inicio', icon: Home, path: '/' },
     { id: 'library', name: 'Biblioteca', icon: BookOpen, path: '/library' },
-    { id: 'trivia', name: 'Trivia', icon: Brain, path: '/trivia' }
+    { id: 'trivia', name: 'Trivia', icon: Brain, path: '/trivia' },
+    { id: 'leaderboard', name: 'Clasificación', icon: Trophy, path: '/leaderboard' },
+    { id: 'achievements', name: 'Logros', icon: Award, path: '/achievements' }
   ];
 
   const handleNavigation = (item) => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Users, ArrowLeft, Copy, Check, Clock, BookOpen } from 'lucide-react';
+import { Play, Users, ArrowLeft, Copy, Check, Clock, BookOpen, Target } from 'lucide-react';
 import { useSocket } from '../services/SocketContext';
 import toast from 'react-hot-toast';
 
@@ -9,7 +9,7 @@ const LobbyPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { joinRoom, startGame, leaveRoom, gameState, playerInfo, isConnected } = useSocket();
+  const { joinRoom, startGame, leaveRoom, gameState, playerInfo, isConnected, updateTotalQuestions, updateQuestionTime, updateDifficulty } = useSocket();
   
   const [isJoining, setIsJoining] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -36,10 +36,17 @@ const LobbyPage = () => {
   }, [gameState.status, navigate, roomId]);
 
   useEffect(() => {
+    console.log('🏠 LobbyPage - Estado actualizado:', {
+      roomId: gameState.roomId,
+      status: gameState.status,
+      players: gameState.players.length,
+      isJoining
+    });
     if (gameState.roomId && gameState.status === 'lobby') {
+      console.log('✅ LobbyPage - Estado de lobby detectado, ocultando spinner');
       setIsJoining(false);
     }
-  }, [gameState.roomId, gameState.status]);
+  }, [gameState.roomId, gameState.status, gameState.players.length, isJoining]);
 
   // Cuenta regresiva cuando hay mínimo de jugadores
   useEffect(() => {
@@ -474,7 +481,8 @@ const LobbyPage = () => {
               padding: '1rem',
               border: '1px solid rgba(199, 125, 255, 0.2)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
-              textAlign: 'center'
+              textAlign: 'center',
+              position: 'relative'
             }}
             whileHover={{ borderColor: 'rgba(199, 125, 255, 0.4)', boxShadow: '0 0 20px rgba(199, 125, 255, 0.3)' }}
           >
@@ -482,9 +490,46 @@ const LobbyPage = () => {
               <BookOpen size={16} style={{ color: '#c77dff' }} />
               <span style={{ fontSize: '0.65rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Preguntas</span>
             </div>
-            <div style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(199, 125, 255, 0.5)' }}>
-              {gameState.totalQuestions}
-            </div>
+            <select
+              value={gameState.totalQuestions || 3}
+              onChange={(e) => {
+                const newValue = parseInt(e.target.value);
+                if (roomId && [3, 6, 9].includes(newValue)) {
+                  updateTotalQuestions(roomId, newValue);
+                }
+              }}
+              style={{
+                fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+                fontWeight: '900',
+                color: '#ffffff',
+                background: 'transparent',
+                border: '2px solid rgba(199, 125, 255, 0.4)',
+                borderRadius: '6px',
+                padding: '0.5rem',
+                textAlign: 'center',
+                cursor: 'pointer',
+                textShadow: '0 0 10px rgba(199, 125, 255, 0.5)',
+                width: '100%',
+                outline: 'none',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'textfield'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.borderColor = 'rgba(199, 125, 255, 0.8)';
+                e.target.style.boxShadow = '0 0 15px rgba(199, 125, 255, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.borderColor = 'rgba(199, 125, 255, 0.4)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              {[3, 6, 9].map(num => (
+                <option key={num} value={num} style={{ background: '#1a1a2e', color: '#ffffff' }}>
+                  {num}
+                </option>
+              ))}
+            </select>
           </motion.div>
 
           <motion.div
@@ -507,7 +552,7 @@ const LobbyPage = () => {
                         </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             style={{ 
               background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
               borderRadius: '8px',
@@ -522,9 +567,101 @@ const LobbyPage = () => {
               <Clock size={16} style={{ color: '#fbbf24' }} />
               <span style={{ fontSize: '0.65rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Tiempo</span>
                     </div>
-            <div style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: '900', color: '#ffffff', textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
-              30s
+            <select
+              value={gameState.questionTime || 30}
+              onChange={(e) => {
+                const newValue = parseInt(e.target.value);
+                if (roomId && [10, 20, 30, 60].includes(newValue)) {
+                  updateQuestionTime(roomId, newValue);
+                }
+              }}
+              style={{
+                fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+                fontWeight: '900',
+                color: '#ffffff',
+                background: 'transparent',
+                border: '2px solid rgba(251, 191, 36, 0.4)',
+                borderRadius: '6px',
+                padding: '0.5rem',
+                textAlign: 'center',
+                cursor: 'pointer',
+                textShadow: '0 0 10px rgba(251, 191, 36, 0.5)',
+                width: '100%',
+                outline: 'none',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'textfield'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.borderColor = 'rgba(251, 191, 36, 0.8)';
+                e.target.style.boxShadow = '0 0 15px rgba(251, 191, 36, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              {[10, 20, 30, 60].map(num => (
+                <option key={num} value={num} style={{ background: '#1a1a2e', color: '#ffffff' }}>
+                  {num}s
+                </option>
+              ))}
+            </select>
+          </motion.div>
+
+          <motion.div 
+            style={{ 
+              background: 'linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 30, 0.9) 100%)',
+              borderRadius: '8px',
+              padding: '1rem',
+              border: '1px solid rgba(16, 185, 129, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
+              textAlign: 'center',
+              position: 'relative'
+            }}
+            whileHover={{ borderColor: 'rgba(16, 185, 129, 0.4)', boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.65rem', color: '#8b8b8b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '600' }}>Dificultad</span>
             </div>
+            <select
+              value={gameState.difficulty || 'MEDIUM'}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                if (roomId && ['EASY', 'MEDIUM', 'HARD'].includes(newValue)) {
+                  updateDifficulty(roomId, newValue);
+                }
+              }}
+              style={{
+                fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
+                fontWeight: '900',
+                color: '#ffffff',
+                background: 'transparent',
+                border: '2px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '6px',
+                padding: '0.5rem',
+                textAlign: 'center',
+                cursor: 'pointer',
+                textShadow: '0 0 10px rgba(16, 185, 129, 0.5)',
+                width: '100%',
+                outline: 'none',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'textfield'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.borderColor = 'rgba(16, 185, 129, 0.8)';
+                e.target.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              <option value="EASY" style={{ background: '#1a1a2e', color: '#ffffff' }}>FÁCIL</option>
+              <option value="MEDIUM" style={{ background: '#1a1a2e', color: '#ffffff' }}>MEDIO</option>
+              <option value="HARD" style={{ background: '#1a1a2e', color: '#ffffff' }}>DIFÍCIL</option>
+            </select>
           </motion.div>
         </motion.div>
 

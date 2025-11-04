@@ -12,11 +12,14 @@ const LibraryPage = () => {
   const [results, setResults] = useState([]);
   const [myLibrary, setMyLibrary] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [selectedBookItem, setSelectedBookItem] = useState(null); // Para libros de "Mi biblioteca" (incluye status)
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [translated, setTranslated] = useState(null);
   const [translating, setTranslating] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState('TO_READ'); // Estado actual del libro
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const loadMyLibrary = async () => {
     if (!user?.id) return;
@@ -58,6 +61,20 @@ const LibraryPage = () => {
         toast.success('Libro agregado a tu biblioteca');
         loadMyLibrary();
         setShowModal(false);
+        
+        // Verificar logros
+        if (user?.id) {
+          try {
+            const achievementsRes = await libraryAPI.checkAchievements(user.id);
+            if (achievementsRes?.success && achievementsRes.unlocked?.length > 0) {
+              achievementsRes.unlocked.forEach(achievement => {
+                toast.success(`🏆 ¡Logro desbloqueado! ${achievement.achievement.name}`, { duration: 5000 });
+              });
+            }
+          } catch (e) {
+            // Silenciar errores de verificación de logros
+          }
+        }
       } else {
         toast.error(res?.error || 'No se pudo agregar');
       }
@@ -66,14 +83,36 @@ const LibraryPage = () => {
     }
   };
 
+  // Abrir modal para libros de búsqueda
   const openModal = async (book) => {
     setSelectedBook(book);
+    setSelectedBookItem(null); // No es de mi biblioteca
     setSelectedDetail(null);
     setShowModal(true);
     setDetailLoading(true);
     setTranslated(null);
+    setCurrentStatus('TO_READ');
     try {
       const res = await libraryAPI.getDetail(book.id, book.editionId);
+      if (res?.success) setSelectedDetail(res.detail);
+    } catch (_) {
+      // noop
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  // Abrir modal para libros de mi biblioteca
+  const openModalFromLibrary = async (item) => {
+    setSelectedBookItem(item); // Item completo de mi biblioteca (incluye status)
+    setSelectedBook(item.book); // El libro en sí
+    setSelectedDetail(null);
+    setShowModal(true);
+    setDetailLoading(true);
+    setTranslated(null);
+    setCurrentStatus(item.status || 'TO_READ'); // Usar el status actual del libro
+    try {
+      const res = await libraryAPI.getDetail(item.book.id, item.book.editionId);
       if (res?.success) setSelectedDetail(res.detail);
     } catch (_) {
       // noop
@@ -85,7 +124,66 @@ const LibraryPage = () => {
   const closeModal = () => {
     setShowModal(false);
     setSelectedBook(null);
+    setSelectedBookItem(null);
     setTranslated(null);
+    setCurrentStatus('TO_READ');
+  };
+
+  const handleUpdateStatus = async (newStatus) => {
+    if (!user?.id || !selectedBookItem) {
+      toast.error('Error: información incompleta');
+      return;
+    }
+    if (newStatus === currentStatus) {
+      return; // No hay cambios
+    }
+    setUpdatingStatus(true);
+    try {
+      const res = await libraryAPI.updateStatus({
+        userId: user.id,
+        bookId: selectedBookItem.bookId,
+        status: newStatus
+      });
+      if (res?.success) {
+        setCurrentStatus(newStatus);
+        
+        // Mostrar notificación de XP si se ganó
+        if (res.xp && res.xp.gained > 0) {
+          if (res.xp.leveledUp) {
+            toast.success(`🎉 ¡Subiste de nivel! Nivel ${res.xp.newLevel} | +${res.xp.gained} XP`, { duration: 5000 });
+          } else {
+            toast.success(`✨ +${res.xp.gained} XP | Total: ${res.xp.total} XP`, { duration: 4000 });
+          }
+          // Notificar al sidebar que el XP cambió
+          window.dispatchEvent(new Event('xp-updated'));
+        } else {
+          toast.success('Estado actualizado');
+        }
+        
+        // Actualizar la lista de mi biblioteca
+        loadMyLibrary();
+        
+        // Verificar logros
+        if (user?.id) {
+          try {
+            const achievementsRes = await libraryAPI.checkAchievements(user.id);
+            if (achievementsRes?.success && achievementsRes.unlocked?.length > 0) {
+              achievementsRes.unlocked.forEach(achievement => {
+                toast.success(`🏆 ¡Logro desbloqueado! ${achievement.achievement.name}`, { duration: 5000 });
+              });
+            }
+          } catch (e) {
+            // Silenciar errores de verificación de logros
+          }
+        }
+      } else {
+        toast.error(res?.error || 'No se pudo actualizar el estado');
+      }
+    } catch (e) {
+      toast.error('Error actualizando estado');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const handleTranslate = async () => {
@@ -179,7 +277,7 @@ const LibraryPage = () => {
             <div className="list" style={{ display: 'grid', gap: '0.5rem' }}>
               {myLibrary.map((item) => (
                 <div key={item.bookId} className="list-item" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', cursor: 'pointer', flex: 1 }} onClick={() => openModalFromLibrary(item)}>
                     <img src={item.book.coverUrl || 'https://via.placeholder.com/48x72?text=No+Cover'} alt={item.book.title} width={36} height={54} style={{ borderRadius: 4, objectFit: 'cover' }} />
                     <div>
                       <div className="font-medium">{item.book.title}</div>
@@ -226,6 +324,29 @@ const LibraryPage = () => {
                     )}
                   </>
                 )}
+                {/* Selector de estado (solo para libros de Mi biblioteca) */}
+                {selectedBookItem && (
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.5rem' }}>
+                      Estado del libro
+                    </label>
+                    <select
+                      className="input"
+                      value={currentStatus}
+                      onChange={(e) => handleUpdateStatus(e.target.value)}
+                      disabled={updatingStatus}
+                      style={{ width: '100%', padding: '0.5rem' }}
+                    >
+                      <option value="TO_READ">Por leer</option>
+                      <option value="READING">Leyendo</option>
+                      <option value="READ">Leído</option>
+                      <option value="COMPLETED">Completado</option>
+                    </select>
+                    {updatingStatus && (
+                      <div className="text-xs text-gray-500" style={{ marginTop: '0.25rem' }}>Actualizando...</div>
+                    )}
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     {selectedDetail?.description && (
@@ -235,7 +356,9 @@ const LibraryPage = () => {
                     )}
                   </div>
                   <button className="btn btn-secondary" onClick={closeModal}>Cerrar</button>
-                  <button className="btn btn-primary" onClick={() => handleAdd(selectedBook)}>Agregar a mi biblioteca</button>
+                  {!selectedBookItem && (
+                    <button className="btn btn-primary" onClick={() => handleAdd(selectedBook)}>Agregar a mi biblioteca</button>
+                  )}
                 </div>
               </div>
             </div>
